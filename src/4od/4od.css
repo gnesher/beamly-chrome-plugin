@@ -1,0 +1,15 @@
+#beamly {
+	position: absolute;
+	top: 30px;
+	right: 10px;
+	width: 190px;
+	height: 390px;
+	overflow: scroll;
+	z-index: 1000;
+	padding: 5px;
+	background: #fff;
+}
+#flashContainer {
+	float: left;
+	margin-left: 10px;
+}

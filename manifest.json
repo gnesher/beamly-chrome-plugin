@@ -1,0 +1,74 @@
+{
+  "name": "Beamly on demand",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Beamly on damand",
+  "homepage_url": "http://gnesher.com",
+  "icons": {
+    "16": "icons/beamly16.png",
+    "48": "icons/beamly48.png",
+    "128": "icons/beamly128.png"
+  },
+  "permissions": [
+    "https://*/*"
+  ],
+  "background": {
+    "page": "src/bg/background.html",
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://www.bbc.co.uk/iplayer/*"
+      ],
+      "css": [
+        "src/inject/inject.css"
+      ],
+      "js": [
+        "js/jquery/jquery.min.js",
+        "src/inject/inject.js"
+      ]      
+    },
+    {
+      "matches": [
+        "http://www.channel4.com/programmes/*"
+      ],
+      "css": [
+        "src/4od/4od.css"
+      ],
+      "js": [
+        "js/jquery/jquery.min.js",
+        "src/4od/4od.js"
+      ]      
+    },
+    {
+      "matches": [
+        "https://www.itv.com/itvplayer/*"
+      ],
+      "css": [
+        "src/itv/itv.css"
+      ],
+      "js": [
+        "js/jquery/jquery.min.js",
+        "src/itv/itv.js"
+      ]      
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/watch*"
+      ],
+      "css": [
+        "src/youtube/youtube.css"
+      ],
+      "js": [
+        "js/jquery/jquery.min.js",
+        "src/youtube/youtube.js"
+      ]      
+    }
+
+  ],
+  "web_accessible_resources": [
+    "js/jquery/zeebox.js",
+    "icons/beamly16.png"
+  ]
+}
