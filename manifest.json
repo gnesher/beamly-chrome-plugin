@@ -68,7 +68,7 @@
 
   ],
   "web_accessible_resources": [
-    "js/jquery/zeebox.js",
+    "//static.zeebox.com/embed/1/zeebox.js",
     "icons/beamly16.png"
   ]
 }

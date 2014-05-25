@@ -37,8 +37,7 @@ chrome.extension.sendMessage({}, function(response) {
 				document.getElementById("beamly").appendChild(beamlyCode);			
 
 				var s = document.createElement('script');
-				// TODO: add "script.js" to web_accessible_resources in manifest.json
-				s.src = chrome.extension.getURL('js/jquery/zeebox.js');
+				s.src = '//static.zeebox.com/embed/1/zeebox.js';
 				s.onload = function() {
 				    this.parentNode.removeChild(this);
 				};
