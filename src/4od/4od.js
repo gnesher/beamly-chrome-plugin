@@ -23,7 +23,6 @@ chrome.extension.sendMessage({}, function(response) {
 				}
 			}
 
-			console.log (tvRoomID);
 			if (tvRoomID != '') {
 				var beamlyIframe = document.createElement("div");
 				beamlyIframe.setAttribute('id', 'beamly');

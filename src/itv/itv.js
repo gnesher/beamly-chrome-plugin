@@ -16,7 +16,6 @@ chrome.extension.sendMessage({}, function(response) {
 		  	'zeebox-app-key': 'b9ceab5038dfc6eae0875c3645093d7d'
 		  }
 		}).done(function(response) {
-			console.log(response);
 			var tvRoomID = '';
 			for (var key = 0; key < response.sections.length; key++) {
 				if (response.sections[key].display_type === 'TV Rooms') {
