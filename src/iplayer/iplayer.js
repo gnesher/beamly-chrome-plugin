@@ -3,109 +3,77 @@ chrome.extension.sendMessage({}, function(response) {
 	if (document.readyState === "complete") {
 		clearInterval(readyStateCheckInterval);
 
-		$.ajaxSetup({
-		    headers: {
-		        'zeebox-app-id': "0f434d35",
-		        'zeebox-app-key': "0ef2d755c449584e232479a6be882c0f"
-		    }
-		});
+		url = document.URL.split('/');
+		series = url[url.length-1];
+		seriesName = series.split('-')[0];
 
-		var SeriesModel = Backbone.Model.extend({
-			url: "https://api-uk.zeebox.com/search/2/blended-search",
-			parse: function(response, options) {
-				console.log(response);
-				var series = null;
-				_.each(response.sections, function(section){
-					if (section.display_type == 'Top Results' || section.display_type == 'TV Shows') {
-						_.each(section.docs, function(doc) {
-							if (doc.brands[0].title == seriesName) {
-								series = doc
-							}	
-						})
-					}
-				})
-				console.log (series);
-				return (series);
-			}
-		});
-
-		var EpisodeModel = Backbone.Model.extend({
-			brandId: null,
+		TweetCollection = Backbone.Collection.extend({
 			url: function() {
-				return 'https://i.zeebox.com/tms/broadcastevents.json?brand=' + this.brandId + '&to=now&max-results=1&order-by=-start-time'
+				return "https://api-uk.zeebox.com/api/1/hts/uk/populate/" + this.episodeID + "/" + this.timer + "/"
+			}
+			start: function(episodeID) {
+				this.episodeID = episodeID;
+				this.fetch();
+				setInterval(function() {
+					this.timer += 6;
+					this.fetch();
+				}, 6000);
 			},
-			setBrandId: function(brandId) {
-				this.brandId = brandId;
+			sync: function(method, model, options) {
+
+				Backbone.sync.call(method, model, options);
 			}
 		});
 
-		var TwitterModel = Backbone.Model.extend({
-			initialize: function(options) {
-				this.url = 'https://api-uk.zeebox.com/api/1/hts/uk/metadata/' + options.id + '/';
-			}
-		});
-
-		var EpisodeView = Backbone.View.extend({
-			initialize: function(options) {
-				that = this;
-				this.seriesModel = options.seriesModel;
-				this.episodeModel = new EpisodeModel();
-				this.listenTo(seriesModel, 'change', function(model) {
-					that.episodeModel.setBrandId(model.attributes.brands[0].id);
-					that.episodeModel.fetch().then(function() {
-						console.log(that.episodeModel.get('broadcastevents')[0].id);
-						that.twitterModel = new TwitterModel({'id': that.episodeModel.get('broadcastevents')[0].id});
-						that.twitterModel.fetch();
+		$.ajax({
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader('zeebox-app-id', "0f434d35");
+				xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
+			},
+			data: {"q": seriesName, "tvc": "uk"},
+			url: "https://api-uk.zeebox.com/search/2/blended-search"
+		}).then(function(response){
+			var series = null;
+			_.each(response.sections, function(section){
+				if (section.display_type == 'Top Results') {
+					_.each(section.docs, function(doc) {
+						if (doc.name == seriesName) {
+							series = doc
+						}	
+					})
+				}
+			})
+			if (series != null) {
+				$.ajax({
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader('zeebox-app-id', "0f434d35");
+						xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
+					},
+					url: "https://i.zeebox.com/tms/broadcastevents.json?brand=" + series.brands[0].id + "&to=now&max-results=1&order-by=-start-time"
+				}).then(function(response){
+					$.ajax({
+						url: "http://i.zeebox.com/tms/broadcastevents/" + response.broadcastevents[0].id + ".json"
+					}).then(function(response){		
+						episodeID = response.episode.id;
+						$.ajax({
+							url: "http://i.zeebox.com/tms/broadcastevents/" + episodeID + ".json"
+						}).then(function(response){		
+							$.ajax({
+								beforeSend: function(xhr) {
+									xhr.setRequestHeader('zeebox-app-id', "0f434d35");
+									xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
+								},								
+								url: "https://api-uk.zeebox.com/api/1/hts/uk/populate/" + episodeID + "/6000/"
+							}).then(function(response){		
+								console.log(response);
+							});
+						});
 					});
-				});
+				});			
 			}
+
 		});
 
-		seriesName = $('.stream-item .current .title').text().trim();
-		seriesModel = new SeriesModel();
-		episodeView = new EpisodeView({'seriesModel': seriesModel});
-		seriesModel.fetch({data: $.param({"q": seriesName, "tvc": "uk"})}).then(function(){
-
-		})
-
-
-		// $.ajax({
-		//   url: "https://api-uk.zeebox.com/search/2/blended-search",
-		//   data: {
-		//   	q: seriesName,
-		//   	tvc: 'uk'
-		//   },
-		//   headers: {
-		//   	'zeebox-app-id': '3ff3ec52',
-		//   	'zeebox-app-key': 'b9ceab5038dfc6eae0875c3645093d7d'
-		//   }
-		// }).done(function(response) {
-		// 	var tvRoomID = '';
-		// 	for (var key = 0; key < response.sections.length; key++) {
-		// 		if (response.sections[key].display_type === 'TV Rooms') {
-		// 			tvRoomID = response.sections[key].docs[0].entity.id;
-		// 		}
-		// 	}
-
-		// 	if (tvRoomID) {
-		// 		var beamlyIframe = document.createElement("div");
-		// 		beamlyIframe.setAttribute('id', 'beamly');
-		// 		beamlyIframe.setAttribute('style', "width:" + (window.innerWidth - 1010) + "px");
-		// 		document.getElementById("blq-container").appendChild(beamlyIframe);		
-
-		// 		var beamlyCode = document.createElement("a");
-		// 		beamlyCode.setAttribute('href', '//uk.beamly.com/tv/rooms/' + tvRoomID);
-		// 		beamlyCode.setAttribute('data-zeebox-type', 'tv-room');
-		// 		document.getElementById("beamly").appendChild(beamlyCode);			
-
-		// 		var s = document.createElement('script');
-		// 		s.src = '//static.zeebox.com/embed/1/zeebox.js';
-		// 		s.onload = function() {
-		// 		    this.parentNode.removeChild(this);
-		// 		};
-		// 		(document.head||document.documentElement).appendChild(s);
-		// 	}
-		// });
 	}
 	}, 10);
 });
