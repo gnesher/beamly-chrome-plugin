@@ -104,7 +104,7 @@ var BeamlyClass = {
 		updateTweets: function(model) {
 			tweet = new BeamlyClass.TweetView({model: model});
 			this.$el.children("#beamly-tweets").prepend(tweet.$el);
-			tweet.$el.animate({opacity: "100"}, 1500);
+			tweet.$el.hide().fadeIn().slideDown();
 		},
 		pauseFetch: function() {
 			this.tweetCollection.pause();
