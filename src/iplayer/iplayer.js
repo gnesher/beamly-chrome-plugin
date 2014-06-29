@@ -3,77 +3,63 @@ chrome.extension.sendMessage({}, function(response) {
 	if (document.readyState === "complete") {
 		clearInterval(readyStateCheckInterval);
 
-		url = document.URL.split('/');
-		series = url[url.length-1];
-		seriesName = series.split('-')[0];
-
-		TweetCollection = Backbone.Collection.extend({
-			url: function() {
-				return "https://api-uk.zeebox.com/api/1/hts/uk/populate/" + this.episodeID + "/" + this.timer + "/"
-			}
-			start: function(episodeID) {
-				this.episodeID = episodeID;
-				this.fetch();
-				setInterval(function() {
-					this.timer += 6;
-					this.fetch();
-				}, 6000);
-			},
-			sync: function(method, model, options) {
-
-				Backbone.sync.call(method, model, options);
-			}
-		});
-
-		$.ajax({
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader('zeebox-app-id', "0f434d35");
-				xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
-			},
-			data: {"q": seriesName, "tvc": "uk"},
-			url: "https://api-uk.zeebox.com/search/2/blended-search"
-		}).then(function(response){
-			var series = null;
-			_.each(response.sections, function(section){
-				if (section.display_type == 'Top Results') {
-					_.each(section.docs, function(doc) {
-						if (doc.name == seriesName) {
-							series = doc
-						}	
-					})
-				}
-			})
-			if (series != null) {
+		var fetchSeries = function(series, startTime, endTime) {
+			var deferred = new $.Deferred();
+			searchString = "https://i.zeebox.com/tms/broadcastevents.json?brand=" + series.brands[0].id + "&from=" + startTime + "&to=" + endTime + "&max-results=1&order-by=-start-time";
+			$.ajax({
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('zeebox-app-id', "0f434d35");
+					xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
+				},
+				url: searchString
+			}).done(function(response){
 				$.ajax({
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader('zeebox-app-id', "0f434d35");
-						xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
-					},
-					url: "https://i.zeebox.com/tms/broadcastevents.json?brand=" + series.brands[0].id + "&to=now&max-results=1&order-by=-start-time"
-				}).then(function(response){
+					url: "http://i.zeebox.com/tms/broadcastevents/" + response.broadcastevents[0].id + ".json"
+				}).done(function(response){		
+					episodeID = response.episode.id;
 					$.ajax({
-						url: "http://i.zeebox.com/tms/broadcastevents/" + response.broadcastevents[0].id + ".json"
-					}).then(function(response){		
-						episodeID = response.episode.id;
-						$.ajax({
-							url: "http://i.zeebox.com/tms/broadcastevents/" + episodeID + ".json"
-						}).then(function(response){		
-							$.ajax({
-								beforeSend: function(xhr) {
-									xhr.setRequestHeader('zeebox-app-id', "0f434d35");
-									xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
-								},								
-								url: "https://api-uk.zeebox.com/api/1/hts/uk/populate/" + episodeID + "/6000/"
-							}).then(function(response){		
-								console.log(response);
-							});
-						});
+						url: "http://i.zeebox.com/tms/broadcastevents/" + episodeID + ".json"
+					}).done(function(response){
+						deferred.resolve(response);
+					}).error(function(response) {
+						deferred.reject({'error': 'HTS not avilable for episode, aborting'});
 					});
-				});			
-			}
+				})
+				.error(function(response){
+					deferred.reject({});
+				});
+			});
+			return deferred.promise();						
+		};
 
+		var url = document.URL.split('/'),
+			series = url[url.length-1],
+			seriesName = $(".more-episodes .current .title").length > 0 ? $(".more-episodes .current .title").html().trim() : series.split('-')[0],
+			episodeModel = new Backbone.Model(),
+			tweetCollection = new BeamlyClass.TweetCollection(),
+			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel});
+
+		BeamlyClass.fetchBrand(seriesName)
+		.done(function(response) {
+			var startTime, 
+				endTime,
+				series = response;
+			$.get('https://atlas.metabroadcast.com/3.0/content.json?uri=' + document.URL).then(function(response){
+				startTime = response.contents[0].broadcasts[0].transmission_time.replace(/-|:/g, "")
+				endTime = response.contents[0].broadcasts[0].transmission_end_time.replace(/-|:/g, "")
+				fetchSeries(series, startTime, endTime)
+				.done(function(response) {
+					episodeModel.set(response);
+				})
+				.fail(function(error){
+					console.log (error);
+					console.log (seriesName);
+				});				
+			});			
+		})
+		.fail(function(error){
+			console.log (error);
 		});
-
 	}
 	}, 10);
 });

@@ -16,6 +16,9 @@
     "page": "src/bg/background.html",
     "persistent": true
   },
+  "browser_action":{
+      "default_icon":"icons/beamly16.png"
+  },  
   "content_scripts": [
     {
       "matches": [
@@ -28,15 +31,17 @@
         "/js/jquery-1.11.1.min.js",
         "/js/underscore.js",
         "/js/backbone.js",
+        "src/common/common.js",
         "src/iplayer/iplayer.js"
       ]      
     }
   ],
   "web_accessible_resources": [
-    "/js/backbone.js",
-    "/js/underscore.js",
-    "/js/jquery-1.11.1.min.js",
-    "//static.zeebox.com/embed/1/zeebox.js",
-    "icons/beamly16.png"
+    "icons/appicons.png",
+    "js/backbone.js",
+    "js/underscore.js",
+    "js/jquery-1.11.1.min.js",
+    "src/common/common.js",
+    "//static.zeebox.com/embed/1/zeebox.js"
   ]
 }
