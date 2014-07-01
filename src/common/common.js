@@ -101,7 +101,7 @@ var BeamlyClass = {
 		render: function() {
 			this.tweetCollection.setEpisodeId(this.model.get('id'), 120);
 			this.$el.html(this.template);
-			jQuery('#main').append(this.$el);
+			jQuery('body').append(this.$el);
 		}
 	})
 }

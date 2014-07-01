@@ -47,6 +47,7 @@
         "/js/underscore.js",
         "/js/backbone.js",
         "src/common/common.js",
+        "js/moment.js",
         "src/4od/4od.js"
       ]      
     },

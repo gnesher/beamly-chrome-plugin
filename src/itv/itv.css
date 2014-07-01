@@ -1,7 +1,7 @@
 #beamlyView {
 	position: absolute;
 	right: 0;
-	top: 0;
+	top: 250px;
 	min-width: 200px;
 	z-index: 1000;
 	background: #fff;
@@ -9,6 +9,7 @@
 	margin-top: 24px;
 	width: 300px;
 	height: 458px;
+	color: #000;
 }
 
 #beamly-tweets {

@@ -33,17 +33,34 @@ chrome.extension.sendMessage({}, function(response) {
 		};
 
 		var seriesName,
-			fullSeriesName,
 			episodeModel = new Backbone.Model(),
 			tweetCollection = new BeamlyClass.TweetCollection(),
 			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel});
 
 		var lunchBeamly = function(response) {
-			var startTime , 
+			var startTime, 
 				endTime,
-				series = $("#brand-split-title");
+				series = response;
+
+			dateAndDuration = $("#broadcast-info").text().split("C4Duration: ");
+			dateArray = dateAndDuration[0].split(" ");
+			duration = parseInt(dateAndDuration[1]);
+
+
+			dateString = dateArray[0] + ' ' + dateArray[2] + ' ' + dateArray[3] + ' ' + dateArray[4] + ' +000';
+			momentTime = moment(dateString, "hA, DD MMMM YYYY ZZ");
+			startTime = momentTime.zone("+000").format().replace(/-|:/g, "");
+			endTime = momentTime.add('minutes', duration).zone("+000").format().replace(/-|:/g, "");
+
+			startTime = startTime.slice(0, -5);
+			endTime = endTime.slice(0, -5);
+
+			startTime += "Z";
+			endTime += "Z";
+
 			fetchSeries(series, startTime, endTime)
 			.done(function(response) {
+				console.log(response);
 				episodeModel.set(response);
 				beamlyView.startFetch();
 			})
@@ -52,26 +69,16 @@ chrome.extension.sendMessage({}, function(response) {
 			});				
 		}
 
-		$.get(document.URL+'.json').then(function(response){
-			seriesName = response.jsConf.player.title
-			fullSeriesName = seriesName + ' ' + response.jsConf.player.subtitle
-			BeamlyClass.fetchBrand(seriesName)
-			.done(function(response) {
-				lunchBeamly(response)
-			})
-			.fail(function(error){
-				// unable to match series with name, lets try full name
-				console.log (error);
-				console.log('trying with full series name: ' + fullSeriesName);
-				BeamlyClass.fetchBrand(fullSeriesName)
-				.done(function(response) {
-					lunchBeamly(response)
-				})
-				.fail(function(error){
-					console.log (error);
-				});
-			});
+		seriesName = $("#brand-split-title").html()
+		BeamlyClass.fetchBrand(seriesName)
+		.done(function(response) {
+			lunchBeamly(response)
 		})
+		.fail(function(error){
+			// unable to match series with name, lets try full name
+			console.log (error);
+			console.log('trying with full series name: ' + fullSeriesName);
+		});
 	}
 	}, 10);
 });
