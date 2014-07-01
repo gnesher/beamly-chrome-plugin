@@ -32,19 +32,35 @@ chrome.extension.sendMessage({}, function(response) {
 			return deferred.promise();						
 		};
 
-		var seriesName,
-			fullSeriesName,
+		var seriesName = $("h2.episode-title").html(),
 			episodeModel = new Backbone.Model(),
 			tweetCollection = new BeamlyClass.TweetCollection(),
 			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel});
 
+		moment.lang("en")
+
 		var lunchBeamly = function(response) {
-			var startTime, 
+			var time = $(".hero .date-display-single").html(),
+				startTime, 
 				endTime,
 				series = response;
+
+			arr = time.split(' ');
+			dateString = arr[0] + ' ' + arr[2] + ' ' + arr[3] + ' ' + arr[4] + ' +000';
+			momentTime = moment(dateString, "hA, DD MMMM YYYY ZZ");
+			startTime = momentTime.zone("+000").format().replace(/-|:/g, "");
+			duration = parseInt($(".field-name-field-duration .field-item").html().replace(" minutes", ""));
+			endTime = momentTime.add('minutes', duration).zone("+000").format().replace(/-|:/g, "");
+
+			startTime = startTime.slice(0, -5);
+			endTime = endTime.slice(0, -5);
+
+			startTime += "Z";
+			endTime += "Z";
+
 			$.get('https://atlas.metabroadcast.com/3.0/content.json?uri=' + document.URL).then(function(response){
-				startTime = response.contents[0].broadcasts[0].transmission_time.replace(/-|:/g, "")
-				endTime = response.contents[0].broadcasts[0].transmission_end_time.replace(/-|:/g, "")
+				startTime = 
+				endTime = 
 				fetchSeries(series, startTime, endTime)
 				.done(function(response) {
 					episodeModel.set(response);
@@ -56,26 +72,15 @@ chrome.extension.sendMessage({}, function(response) {
 			});						
 		}
 
-		$.get('http' + window.location.hostname + window.location.pathname + '.json').then(function(response){
-			seriesName = response.jsConf.player.title
-			fullSeriesName = seriesName + ' ' + response.jsConf.player.subtitle
-			BeamlyClass.fetchBrand(seriesName)
-			.done(function(response) {
-				lunchBeamly(response)
-			})
-			.fail(function(error){
-				// unable to match series with name, lets try full name
-				console.log (error);
-				console.log('trying with full series name: ' + fullSeriesName);
-				BeamlyClass.fetchBrand(fullSeriesName)
-				.done(function(response) {
-					lunchBeamly(response)
-				})
-				.fail(function(error){
-					console.log (error);
-				});
-			});
+		BeamlyClass.fetchBrand(seriesName)
+		.done(function(response) {
+			lunchBeamly(response)
 		})
+		.fail(function(error){
+			// unable to match series with name, lets try full name
+			console.log (error);
+			console.log('trying with full series name: ' + fullSeriesName);
+		});
 	}
 	}, 10);
 });

@@ -39,24 +39,20 @@ chrome.extension.sendMessage({}, function(response) {
 			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel});
 
 		var lunchBeamly = function(response) {
-			var startTime, 
+			var startTime , 
 				endTime,
-				series = response;
-			$.get('https://atlas.metabroadcast.com/3.0/content.json?uri=' + document.URL).then(function(response){
-				startTime = response.contents[0].broadcasts[0].transmission_time.replace(/-|:/g, "")
-				endTime = response.contents[0].broadcasts[0].transmission_end_time.replace(/-|:/g, "")
-				fetchSeries(series, startTime, endTime)
-				.done(function(response) {
-					episodeModel.set(response);
-					beamlyView.startFetch();
-				})
-				.fail(function(error){
-					console.log (error);
-				});				
-			});						
+				series = $("#brand-split-title");
+			fetchSeries(series, startTime, endTime)
+			.done(function(response) {
+				episodeModel.set(response);
+				beamlyView.startFetch();
+			})
+			.fail(function(error){
+				console.log (error);
+			});				
 		}
 
-		$.get('http' + window.location.hostname + window.location.pathname + '.json').then(function(response){
+		$.get(document.URL+'.json').then(function(response){
 			seriesName = response.jsConf.player.title
 			fullSeriesName = seriesName + ' ' + response.jsConf.player.subtitle
 			BeamlyClass.fetchBrand(seriesName)

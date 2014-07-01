@@ -34,13 +34,46 @@
         "src/common/common.js",
         "src/iplayer/iplayer.js"
       ]      
+    },
+    {
+      "matches": [
+        "http://www.channel4.com/programmes/*"
+      ],
+      "css": [
+        "src/4od/4od.css"
+      ],
+      "js": [
+        "/js/jquery-1.11.1.min.js",
+        "/js/underscore.js",
+        "/js/backbone.js",
+        "src/common/common.js",
+        "src/4od/4od.js"
+      ]      
+    },
+    {
+      "matches": [
+        "https://www.itv.com/itvplayer/*"
+      ],
+      "css": [
+        "src/itv/itv.css"
+      ],
+      "js": [
+        "/js/jquery-1.11.1.min.js",
+        "/js/underscore.js",
+        "/js/backbone.js",
+        "src/common/common.js",
+        "js/moment.js",
+        "src/itv/itv.js"
+      ]      
     }
+
   ],
   "web_accessible_resources": [
     "icons/appicons.png",
     "js/backbone.js",
     "js/underscore.js",
     "js/jquery-1.11.1.min.js",
+    "js/moment.js",
     "src/common/common.js",
     "//static.zeebox.com/embed/1/zeebox.js"
   ]

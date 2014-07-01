@@ -33,21 +33,10 @@ var BeamlyClass = {
 		reset: true,
 		url: function() {
 			if (this.reset)
-				return ("https://api-uk.zeebox.com/api/1/hts/uk/populate/" + this.episodeId + "/" + this.timer + "/");
+				return ("http://hts.zeebox.com/api/1/hts/uk/populate/" + this.episodeId + "/" + this.timer + "/");
 			else
-				return ("https://api-uk.zeebox.com/api/1/hts/uk/poll/" + this.episodeId + "/" + this.timer + "/");
+				return ("http://hts.zeebox.com/api/1/hts/uk/poll/" + this.episodeId + "/" + this.timer + "/");
 		},
-		// initialize: function() {
-		// 	this.on('sync', this.checkNewItems, this);
-		// },
-		// checkNewItems: function() {
-		// 	console.log ('*********** sync *************');
-		// 	if (this.previousLength !== this.models.length) {
-		// 		newModels = this.models.slice(this.previousLength, this.models.length);
-		// 		this.previousLength = this.models.length;
-		// 		this.trigger('newTweets', newModels);
-		// 	}
-		// },
 		pause: function() {
 			clearInterval(this.interval);
 		},
@@ -60,16 +49,9 @@ var BeamlyClass = {
 				that.fetch();
 			}, 6000);
 		},
-		setEpisodeId: function(episodeId) {
-			this.timer = 0;
+		setEpisodeId: function(episodeId, time) {
+			this.timer = time;
 			this.episodeId = episodeId;
-		},
-		sync: function(method, model, options) {
-			options.headers = {
-				'zeebox-app-id': "0f434d35",
-				'zeebox-app-key': "0ef2d755c449584e232479a6be882c0f"
-			};
-			BeamlyClass.originalSync(method, model, options);
 		},
 		parse: function(response) {
 			return response.tweets;
@@ -117,7 +99,7 @@ var BeamlyClass = {
 			this.tweetCollection.start();
 		},
 		render: function() {
-			this.tweetCollection.setEpisodeId(this.model.get('id'));
+			this.tweetCollection.setEpisodeId(this.model.get('id'), 120);
 			this.$el.html(this.template);
 			jQuery('#main').append(this.$el);
 		}
