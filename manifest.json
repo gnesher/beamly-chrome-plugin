@@ -12,13 +12,15 @@
   "permissions": [
     "https://*/*"
   ],
-  "background": {
-    "page": "src/bg/background.html",
-    "persistent": true
-  },
+  // "background": {
+  //   "page": "src/bg/background.html",
+  //   "persistent": true
+  // },
   "browser_action":{
-      "default_icon":"icons/beamly16.png"
-  },  
+      "default_icon":"icons/beamly16.png",
+      "default_title": "Beamly On Demand",
+      "default_popup": "src/browser_action/popup.html"  
+    },  
   "content_scripts": [
     {
       "matches": [
