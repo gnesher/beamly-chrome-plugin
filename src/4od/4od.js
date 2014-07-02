@@ -77,7 +77,7 @@ chrome.extension.sendMessage({}, function(response) {
 		.fail(function(error){
 			// unable to match series with name, lets try full name
 			console.log (error);
-			console.log('trying with full series name: ' + fullSeriesName);
+			console.log('trying with full series name: ' + seriesName);
 		});
 	}
 	}, 10);

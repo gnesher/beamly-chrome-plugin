@@ -30,9 +30,10 @@
         "src/iplayer/iplayer.css"
       ],
       "js": [
-        "/js/jquery-1.11.1.min.js",
-        "/js/underscore.js",
-        "/js/backbone.js",
+        "js/jquery-1.11.1.min.js",
+        "js/underscore.js",
+        "js/backbone.js",
+        "js/twitter-entities.js",
         "src/common/common.js",
         "src/iplayer/iplayer.js"
       ]      
@@ -45,9 +46,10 @@
         "src/4od/4od.css"
       ],
       "js": [
-        "/js/jquery-1.11.1.min.js",
-        "/js/underscore.js",
-        "/js/backbone.js",
+        "js/jquery-1.11.1.min.js",
+        "js/underscore.js",
+        "js/backbone.js",
+        "js/twitter-entities.js",
         "src/common/common.js",
         "js/moment.js",
         "src/4od/4od.js"
@@ -61,9 +63,10 @@
         "src/itv/itv.css"
       ],
       "js": [
-        "/js/jquery-1.11.1.min.js",
-        "/js/underscore.js",
-        "/js/backbone.js",
+        "js/jquery-1.11.1.min.js",
+        "js/underscore.js",
+        "js/backbone.js",
+        "js/twitter-entities.js",
         "src/common/common.js",
         "js/moment.js",
         "src/itv/itv.js"
@@ -77,6 +80,7 @@
     "js/underscore.js",
     "js/jquery-1.11.1.min.js",
     "js/moment.js",
+    "js/twitter-entities.js",
     "src/common/common.js",
     "//static.zeebox.com/embed/1/zeebox.js"
   ]

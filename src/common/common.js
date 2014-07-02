@@ -60,17 +60,18 @@ var BeamlyClass = {
 
 	TweetView: Backbone.View.extend({
 		tagName: "li",
-		template: _.template("<img src='<%- imgurl %>'> <span><%- tweet %></span>"),
+		template: _.template("<img src='<%- imgurl %>'> <span><%= tweet %></span>"),
 		initialize: function() {
 			this.render();
 		},
 		render: function() {
-			this.$el.html(this.template({'imgurl': this.model.get('tweet').user.profile_image_url, 'tweet': this.model.get('tweet').text}));
+			this.$el.html(this.template({'imgurl': this.model.get('tweet').user.profile_image_url, 'tweet': linkify_entities(this.model.get('tweet'))}));
 			return (this);
 		}
 	}),
 
 	BeamlyView: Backbone.View.extend({
+		tweets: [],
 		count: 0,
 		id: "beamlyView",
 		template: "<ul id='beamly-loading'><li>Fetching Tweets...</li></ul><ul id='beamly-tweets'></ul><div class='beamly-footer'><div class='beamly-play'></div></div>",
@@ -87,6 +88,11 @@ var BeamlyClass = {
 			tweet = new BeamlyClass.TweetView({model: model});
 			this.$el.children("#beamly-tweets").prepend(tweet.$el);
 			tweet.$el.hide().fadeIn().slideDown();
+			this.tweets.push(tweet);
+			if (this.tweets.length > 100) {
+				oldTweet = this.tweets.shift().remove();
+			}
+				
 		},
 		pauseFetch: function() {
 			this.tweetCollection.pause();
