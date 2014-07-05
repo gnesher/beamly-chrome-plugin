@@ -1,0 +1,76 @@
+#beamly-header {
+	background: #e90649;
+	height: 48px;
+	width: 100%;
+	color: #fff;
+	list-style: none;
+	font-size: 18px;
+}
+
+#beamly-header li {
+	display: inline-block;
+	margin-right: 12px;
+	vertical-align: middle;
+}
+
+#beamly-header li:last-child {
+	margin-right: 0;
+}
+
+#beamly-logo {
+	background-image:url('chrome-extension://__MSG_@@extension_id__/images/logo.png');	
+	height: 48px;
+	width: 125px;
+	margin-left: 10px;
+}
+
+#beamly-body {
+	padding: 5px;
+}
+
+#beamly-tweets {
+	font-size: 12px;
+	color: #000;
+	height: 350px;
+	overflow-y: auto;
+	text-align: left;
+}
+
+#beamly-tweets li {
+	display: table;
+	padding: 5px 0;
+	border-bottom: 1px solid #efefef;
+	width: 100%;
+}
+
+#beamly-tweets li img, #beamly-tweets li span {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#beamly-tweets li span {
+	padding-left: 5px;
+}
+
+.beamly-footer {
+	height: 35px;
+	margin-top: 10px;
+}
+
+.beamly-play {
+	width: 25px;
+	height: 25px;
+	background-image:url('chrome-extension://__MSG_@@extension_id__/icons/appicons.png');
+	background-position: 56px 0;
+}
+
+.beamly-pause {
+	width: 25px;
+	height: 25px;
+	background-image:url('chrome-extension://__MSG_@@extension_id__/icons/appicons.png');
+	background-position: 0px 0;
+}
+
+#beamly-loading {
+	opacity: 0;
+}

@@ -1,3 +1,5 @@
+var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="beamly-guide">GUIDE</li><li id="beamly-rooms">ROOMS</li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div></div></div>'
+
 var BeamlyClass = {
 	originalSync: Backbone.sync,
 	fetchBrand: function(seriesName) {
@@ -70,23 +72,42 @@ var BeamlyClass = {
 		}
 	}),
 
+	EpisodeModel: Backbone.Model.extend({
+		initialize: function(canonicalurl) {
+			this.canonicalurl = encodeURIComponent(canonicalurl);
+		},
+		url: function() {
+			return 'http://api.tanktop.tv/api/1/eyJzZXJ2aWNlX2lkIjoxMn0:1X3Kaw:rV-8rGpCMkY4-WMKpGEdKtpEf0k/lookup/byurl/?url=' + this.canonicalurl
+		},
+		parse: function(response) {
+			if (response.episode_instances.length == 1) {
+				return response.episode_instances[0]
+			}
+		}
+	}),
+
 	BeamlyView: Backbone.View.extend({
 		tweets: [],
 		count: 0,
 		id: "beamlyView",
-		template: "<ul id='beamly-loading'><li>Fetching Tweets...</li></ul><ul id='beamly-tweets'></ul><div class='beamly-footer'><div class='beamly-play'></div></div>",
-		initialize: function() {
+		template: beamlyTemplate,
+		initialize: function(options) {
+			this.element = options.element;
 			this.tweetCollection = new BeamlyClass.TweetCollection();
 			this.listenTo(this.tweetCollection, "add", this.updateTweets, this);
-			this.listenTo(this.model, "change", this.render);
+			this.listenTo(this.model, "change:beamly_eid", this.setEpisodeId, this);
 		},
 		events: {
 			"click .beamly-play": "startFetch",
 			"click .beamly-pause": "pauseFetch"
 		},
+		setEpisodeId: function() {
+			this.tweetCollection.setEpisodeId(this.model.get('beamly_eid'), 120);
+			this.render().startFetch();
+		},
 		updateTweets: function(model) {
 			tweet = new BeamlyClass.TweetView({model: model});
-			this.$el.children("#beamly-tweets").prepend(tweet.$el);
+			this.$("#beamly-tweets").prepend(tweet.$el);
 			tweet.$el.hide().fadeIn().slideDown();
 			this.tweets.push(tweet);
 			if (this.tweets.length > 100) {
@@ -96,18 +117,18 @@ var BeamlyClass = {
 		},
 		pauseFetch: function() {
 			this.tweetCollection.pause();
-			this.$el.children('#beamly-loading').hide()
-			this.$el.children('.beamly-footer').children('.beamly-pause').removeClass('beamly-pause').addClass('beamly-play');
+			this.$('#beamly-loading').animate({opacity: "0"}, 200);
+			this.$('.beamly-pause').removeClass('beamly-pause').addClass('beamly-play');
 		},
 		startFetch: function() {
-			this.$el.children('#beamly-loading').show()
-			this.$el.children('.beamly-footer').children('.beamly-play').removeClass('beamly-play').addClass('beamly-pause');
+			this.$('#beamly-loading').animate({opacity: "1"}, 200);
+			this.$('.beamly-play').removeClass('beamly-play').addClass('beamly-pause');
 			this.tweetCollection.start();
 		},
 		render: function() {
-			this.tweetCollection.setEpisodeId(this.model.get('id'), 120);
 			this.$el.html(this.template);
-			jQuery('body').append(this.$el);
+			jQuery(this.element).append(this.$el);
+			return this
 		}
 	})
-}
+};
