@@ -80,9 +80,10 @@ var BeamlyClass = {
 			return 'http://api.tanktop.tv/api/1/eyJzZXJ2aWNlX2lkIjoxMn0:1X3Kaw:rV-8rGpCMkY4-WMKpGEdKtpEf0k/lookup/byurl/?url=' + this.canonicalurl
 		},
 		parse: function(response) {
-			if (response.episode_instances.length == 1) {
+			if (response.episode_instances.length == 1 && response.episode_instances[0].beamly_eid !== null) {
 				return response.episode_instances[0]
 			}
+			
 		}
 	}),
 
@@ -96,6 +97,7 @@ var BeamlyClass = {
 			this.tweetCollection = new BeamlyClass.TweetCollection();
 			this.listenTo(this.tweetCollection, "add", this.updateTweets, this);
 			this.listenTo(this.model, "change:beamly_eid", this.setEpisodeId, this);
+			this.listenTo(this.tweetCollection, "error", this.destroy, this);
 		},
 		events: {
 			"click .beamly-play": "startFetch",
@@ -112,8 +114,14 @@ var BeamlyClass = {
 			this.tweets.push(tweet);
 			if (this.tweets.length > 100) {
 				oldTweet = this.tweets.shift().remove();
-			}
-				
+			}				
+		},
+		destroy: function () {
+			this.pauseFetch();
+			_.each(this.tweets, function(tweet) {
+				tweet.remove();
+			});
+			this.remove();
 		},
 		pauseFetch: function() {
 			this.tweetCollection.pause();

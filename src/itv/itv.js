@@ -3,12 +3,30 @@ chrome.extension.sendMessage({}, function(response) {
 	if (document.readyState === "complete") {
 		clearInterval(readyStateCheckInterval);
 
-		var canonicalurl = document.URL,
-			episodeModel = new BeamlyClass.EpisodeModel(canonicalurl),
-			tweetCollection = new BeamlyClass.TweetCollection(),
-			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel, 'element': '.player-wrapper '});
+		var detect = function () {
+			if (url !== document.URL) {
+				url = document.URL;
+				beamlyView.destroy();
+				loadPlugin();
+			}
+		};
 
-		episodeModel.fetch();
+		var url = document.URL,
+			urlDetector = setInterval(function(){ detect() }, 100),
+			episodeModel,
+			tweetCollection,
+			beamlyView;
+
+		var loadPlugin = function() {
+			var canonicalurl = document.URL;
+			episodeModel = new BeamlyClass.EpisodeModel(canonicalurl);
+			tweetCollection = new BeamlyClass.TweetCollection();
+			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel, 'element': ".player-wrapper"});
+			episodeModel.fetch();
+		};
+
+		loadPlugin();
+
 	}
 	}, 10);
 });

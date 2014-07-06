@@ -6,11 +6,7 @@ chrome.extension.sendMessage({}, function(response) {
 		var detect = function () {
 			if (url !== document.URL) {
 				url = document.URL;
-				beamlyView.pauseFetch();
-				beamlyView.remove();
-				beamlyView = null;
-				episodeModel = null;
-				tweetCollection = null;
+				beamlyView.destroy();
 				loadPlugin();
 			}
 		};
@@ -22,7 +18,7 @@ chrome.extension.sendMessage({}, function(response) {
 			beamlyView;
 
 		var loadPlugin = function() {
-			var canonicalurl = document.evaluate("//link[@rel='canonical']/@href", document, null, XPathResult.STRING_TYPE, null).stringValue;
+			var canonicalurl = document.URL;
 			episodeModel = new BeamlyClass.EpisodeModel(canonicalurl);
 			tweetCollection = new BeamlyClass.TweetCollection();
 			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel, 'element': "#player-outer-outer"});
