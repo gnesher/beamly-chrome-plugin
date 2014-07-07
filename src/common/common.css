@@ -37,6 +37,14 @@
 	text-align: left;
 }
 
+#beamly-tweets a, #beamly-tweets a:visited {
+	color: #e90649;
+}
+
+#beamly-tweets a:hover, #beamly-tweets a:active {
+	text-decoration: underline;
+}
+
 #beamly-tweets li {
 	padding: 5px 0;
 	border-bottom: 1px solid #efefef;
@@ -47,19 +55,13 @@
 #beamly-tweets li img {
 	width: 48px;
 	height: 48px;
+	float: left;
 }
 
-#beamly-tweets li img, #beamly-tweets li span {
-	display: inline-block;
-	vertical-align: middle;
-}
-
-#beamly-tweets li span {
-	width: 210px;
-}
-
-#beamly-tweets li span {
-	padding-left: 5px;
+#beamly-tweets .content {
+	float: left;
+	margin-left: 10px;
+	width: 200px;
 }
 
 .beamly-footer {
@@ -83,4 +85,18 @@
 
 #beamly-loading {
 	opacity: 0;
+}
+
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+ 
+.clearfix:after {
+  clear: both;
+}
+ 
+.clearfix {
+  *zoom: 1;
 }

@@ -10,13 +10,14 @@
     "128": "icons/beamly128.png"
   },
   "permissions": [
+    "storage",
     "https://*/*"
   ],
   "browser_action":{
       "default_icon":"icons/beamly16.png",
       "default_title": "Beamly OnDemand",
       "default_popup": "src/browser_action/popup.html"  
-    },  
+  },  
   "content_scripts": [
     {
       "matches": [
@@ -49,7 +50,6 @@
         "js/backbone.js",
         "js/twitter-entities.js",
         "src/common/common.js",
-        "js/moment.js",
         "src/4od/4od.js"
       ]      
     },
@@ -67,7 +67,6 @@
         "js/backbone.js",
         "js/twitter-entities.js",
         "src/common/common.js",
-        "js/moment.js",
         "src/itv/itv.js"
       ]      
     }
@@ -82,6 +81,7 @@
     "js/twitter-entities.js",
     "src/common/common.js",
     "src/common/common.css",
-    "//static.zeebox.com/embed/1/zeebox.js"
+    "//static.zeebox.com/embed/1/zeebox.js",
+    "src/browser_action/popup.js"
   ]
 }

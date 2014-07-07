@@ -62,12 +62,20 @@ var BeamlyClass = {
 
 	TweetView: Backbone.View.extend({
 		tagName: "li",
-		template: _.template("<img src='<%- imgurl %>'> <span><%= tweet %></span>"),
+		className: "clearfix",
+		template: _.template("<img src='<%- imgurl %>'><div class='content'><div><strong><%= username %></strong> - <%= revealtime %><div><%= tweet %></div></div>"),
 		initialize: function() {
 			this.render();
 		},
 		render: function() {
-			this.$el.html(this.template({'imgurl': this.model.get('tweet').user.profile_image_url, 'tweet': linkify_entities(this.model.get('tweet'))}));
+			revealTime = Math.floor(this.model.get('smesh').reveal_time/60) + ":" + this.model.get('smesh').reveal_time%60
+			data = {
+				'imgurl': this.model.get('tweet').user.profile_image_url,
+				'tweet': linkify_entities(this.model.get('tweet')),
+				'username': this.model.get('tweet').user.screen_name,
+				'revealtime': revealTime
+			}
+			this.$el.html(this.template(data));
 			return (this);
 		}
 	}),
@@ -113,9 +121,16 @@ var BeamlyClass = {
 		},
 		updateTweets: function(model) {
 			tweet = new BeamlyClass.TweetView({model: model});
-			this.$("#beamly-tweets").prepend(tweet.$el);
+			if (this.tweets.length > 0)
+				console.log (this.tweets[0].model.get('smesh').reveal_time);
+			if (this.tweets.length == 0 || tweet.model.get('smesh').reveal_time > this.tweets[0].model.get('smesh').reveal_time) {
+				this.tweets.push(tweet);
+				this.$("#beamly-tweets").prepend(tweet.$el);
+			} else {
+				this.tweets = this.tweets.concat([tweet]);
+				this.$("#beamly-tweets").append(tweet.$el);
+			}
 			tweet.$el.hide().fadeIn().slideDown();
-			this.tweets.push(tweet);
 			if (this.tweets.length > 100) {
 				oldTweet = this.tweets.shift().remove();
 			}				
