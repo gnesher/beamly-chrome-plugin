@@ -22,6 +22,7 @@
 	height: 48px;
 	width: 125px;
 	margin-left: 10px;
+	cursor: pointer;
 }
 
 #beamly-body {
@@ -37,15 +38,24 @@
 }
 
 #beamly-tweets li {
-	display: table;
 	padding: 5px 0;
 	border-bottom: 1px solid #efefef;
 	width: 100%;
+	text-align: left !important;
+}
+
+#beamly-tweets li img {
+	width: 48px;
+	height: 48px;
 }
 
 #beamly-tweets li img, #beamly-tweets li span {
-	display: table-cell;
+	display: inline-block;
 	vertical-align: middle;
+}
+
+#beamly-tweets li span {
+	width: 210px;
 }
 
 #beamly-tweets li span {

@@ -1,4 +1,4 @@
-var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="beamly-guide">GUIDE</li><li id="beamly-rooms">ROOMS</li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div></div></div>'
+var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="beamly-guide">FOLLOW</li><li id="beamly-rooms">CHAT</li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div></div></div>'
 
 var BeamlyClass = {
 	originalSync: Backbone.sync,
@@ -101,7 +101,11 @@ var BeamlyClass = {
 		},
 		events: {
 			"click .beamly-play": "startFetch",
-			"click .beamly-pause": "pauseFetch"
+			"click .beamly-pause": "pauseFetch",
+			"click #beamly-logo" : "openBeamly"
+		},
+		openBeamly: function() {
+			window.open("http://uk.beamly.com/tv/episode/" + this.model.get("beamly_eid") + "/");
 		},
 		setEpisodeId: function() {
 			this.tweetCollection.setEpisodeId(this.model.get('beamly_eid'), 120);
