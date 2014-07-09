@@ -70,7 +70,7 @@ var BeamlyClass = {
 		render: function() {
 			revealTime = Math.floor(this.model.get('smesh').reveal_time/60) + ":" + this.model.get('smesh').reveal_time%60
 			data = {
-				'imgurl': this.model.get('tweet').user.profile_image_url,
+				'imgurl': this.model.get('tweet').user.profile_image_url_https,
 				'tweet': linkify_entities(this.model.get('tweet')),
 				'username': this.model.get('tweet').user.screen_name,
 				'revealtime': revealTime
@@ -121,8 +121,6 @@ var BeamlyClass = {
 		},
 		updateTweets: function(model) {
 			tweet = new BeamlyClass.TweetView({model: model});
-			if (this.tweets.length > 0)
-				console.log (this.tweets[0].model.get('smesh').reveal_time);
 			if (this.tweets.length == 0 || tweet.model.get('smesh').reveal_time > this.tweets[0].model.get('smesh').reveal_time) {
 				this.tweets.push(tweet);
 				this.$("#beamly-tweets").prepend(tweet.$el);

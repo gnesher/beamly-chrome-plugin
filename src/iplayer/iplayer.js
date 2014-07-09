@@ -18,7 +18,7 @@ chrome.extension.sendMessage({}, function(response) {
 			beamlyView;
 
 		var loadPlugin = function() {
-			var canonicalurl = document.URL;
+			var canonicalurl = 'http://' + window.location.hostname + window.location.pathname;
 			episodeModel = new BeamlyClass.EpisodeModel(canonicalurl);
 			tweetCollection = new BeamlyClass.TweetCollection();
 			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel, 'element': "#player-outer-outer"});
