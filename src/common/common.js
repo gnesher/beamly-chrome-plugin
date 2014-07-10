@@ -158,11 +158,16 @@ var BeamlyClass = {
 			clearInterval(this.interval);
 			var newTime = Math.floor(this.model.get('episodeLength') * el.offsetX/250 / 6) * 6;
 			this.model.set('currentTime', newTime);
-			_.each(this.tweets, function(tweet) {
-				tweet.remove();
-			});
+			this.cleanTweets();
 			this.tweetCollection.scrubTo(newTime);
 			this.startScrubber();
+		},
+		cleanTweets: function() {
+			_.each(this.tweets, function(tweet) {
+				tweet.model.destroy();
+				tweet.remove();
+			});
+			this.tweets = [];
 		},
 		openBeamly: function() {
 			window.open("http://uk.beamly.com/tv/episode/" + this.model.get("beamly_eid") + "/");
@@ -187,9 +192,7 @@ var BeamlyClass = {
 		},
 		destroy: function () {
 			this.pauseFetch();
-			_.each(this.tweets, function(tweet) {
-				tweet.remove();
-			});
+			this.cleanTweets();
 			this.remove();
 		},
 		pauseFetch: function() {

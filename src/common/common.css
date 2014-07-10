@@ -70,13 +70,16 @@
 }
 
 .beamly-play {
+    cursor: pointer;
 	width: 25px;
 	height: 25px;
 	background-image:url('chrome-extension://__MSG_@@extension_id__/icons/appicons.png');
 	background-position: 56px 0;
+	float: left;
 }
 
 .beamly-pause {
+    cursor: pointer;
 	width: 25px;
 	height: 25px;
 	background-image:url('chrome-extension://__MSG_@@extension_id__/icons/appicons.png');
@@ -109,16 +112,30 @@
 }
 
 .beamly-scrubber {
-	width: 250px;
+	width: 240px;
 	float: left;
 	background: grey;
 	height: 5px;
 	margin-top: 10px;
-	margin-left: 10px;
+	margin-left: 15px;
+    cursor: pointer;
 }
 
 .beamly-scrubber-pos {
 	width: 0;
 	background: #e90649;
-	height: 5px;
+	height: 5px;	
+	margin-right: 50px;
+}
+
+.beamly-scrubber-pos:after {
+	border-radius: 50%;
+	width: 12px;
+	height: 12px; 
+	background: #e90649;
+	color: #e90649;
+	content: " ";
+	display: inline-block;
+	float: right;
+	margin-top: -4px;
 }
