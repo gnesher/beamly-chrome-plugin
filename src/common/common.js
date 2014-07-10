@@ -94,7 +94,7 @@ var BeamlyClass = {
 				minutes = Math.floor(time/60)
 				seconds = String(time%60);
 				if (seconds.length == 1)
-					seconds += "0"
+					seconds = "0".concat(seconds);
 				revealTime = minutes + ":" + seconds;
 			}
 
