@@ -63,15 +63,29 @@ var BeamlyClass = {
 	TweetView: Backbone.View.extend({
 		tagName: "li",
 		className: "clearfix",
-		template: _.template("<img src='<%- imgurl %>'><div class='content'><div><strong><%= username %></strong> - <%= revealtime %><div><%= tweet %></div></div>"),
+		template: _.template("<img src='<%- imgurl %>'><div class='content'><div><strong><%= username %></strong> <span class='beamly-time'><%= revealtime %></span><div><%= tweet %></div></div>"),
 		initialize: function() {
 			this.render();
 		},
+		removeInvalidChars: function(text) {
+		    return text.replace(/[^\x00-\x7F]/g, "");
+		},		
 		render: function() {
-			revealTime = Math.floor(this.model.get('smesh').reveal_time/60) + ":" + this.model.get('smesh').reveal_time%60
+			time = this.model.get('smesh').reveal_time;
+			if (time < 0) {
+				// Tweet happened before show started
+				revealTime = ''
+			} else {
+				minutes = Math.floor(time/60)
+				seconds = String(time%60);
+				if (seconds.length == 1)
+					seconds += "0"
+				revealTime = minutes + ":" + seconds;
+			}
+
 			data = {
 				'imgurl': this.model.get('tweet').user.profile_image_url_https,
-				'tweet': linkify_entities(this.model.get('tweet')),
+				'tweet': this.removeInvalidChars(linkify_entities(this.model.get('tweet'))),
 				'username': this.model.get('tweet').user.screen_name,
 				'revealtime': revealTime
 			}

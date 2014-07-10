@@ -100,3 +100,9 @@
 .clearfix {
   *zoom: 1;
 }
+
+.beamly-time {
+	float: right;
+	color: grey;
+	font-size: 11px;
+}
