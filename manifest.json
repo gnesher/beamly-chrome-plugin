@@ -82,6 +82,7 @@
     "src/common/common.js",
     "src/common/common.css",
     "//static.zeebox.com/embed/1/zeebox.js",
-    "src/browser_action/popup.js"
+    "src/browser_action/popup.js",
+    "images/placeholder.png"
   ]
 }

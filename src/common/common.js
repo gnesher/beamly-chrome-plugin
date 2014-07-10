@@ -1,6 +1,7 @@
 var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="beamly-guide">FOLLOW</li><li id="beamly-rooms">CHAT</li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div></div></div>'
 
 var BeamlyClass = {
+	placeHolder: chrome.extension.getURL("images/placeholder.png"),
 	originalSync: Backbone.sync,
 	fetchBrand: function(seriesName) {
 		var deferred = new $.Deferred();
@@ -66,6 +67,9 @@ var BeamlyClass = {
 		template: _.template("<img src='<%- imgurl %>'><div class='content'><div><strong><%= username %></strong> <span class='beamly-time'><%= revealtime %></span><div><%= tweet %></div></div>"),
 		initialize: function() {
 			this.render();
+			this.$('img').error(function() {
+				$(this).attr("src", BeamlyClass.placeHolder);
+			});
 		},
 		removeInvalidChars: function(text) {
 		    return text.replace(/[^\x00-\x7F]/g, "");
