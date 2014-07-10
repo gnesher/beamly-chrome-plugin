@@ -81,6 +81,7 @@
 	height: 25px;
 	background-image:url('chrome-extension://__MSG_@@extension_id__/icons/appicons.png');
 	background-position: 0px 0;
+	float: left;
 }
 
 #beamly-loading {
@@ -105,4 +106,19 @@
 	float: right;
 	color: grey;
 	font-size: 11px;
+}
+
+.beamly-scrubber {
+	width: 250px;
+	float: left;
+	background: grey;
+	height: 5px;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.beamly-scrubber-pos {
+	width: 0;
+	background: #e90649;
+	height: 5px;
 }

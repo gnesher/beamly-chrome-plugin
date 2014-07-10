@@ -1,4 +1,4 @@
-var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="beamly-guide">FOLLOW</li><li id="beamly-rooms">CHAT</li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div></div></div>'
+var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="beamly-guide">FOLLOW</li><li id="beamly-rooms">CHAT</li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div><div class="beamly-scrubber"><div class="beamly-scrubber-pos"</div></div></div></div>'
 
 var BeamlyClass = {
 	placeHolder: chrome.extension.getURL("images/placeholder.png"),
@@ -42,14 +42,20 @@ var BeamlyClass = {
 		},
 		pause: function() {
 			clearInterval(this.interval);
+		},	
+		scrubTo: function(newTime) {
+			this.reset = true;
+			this.pause();
+			this.timer = newTime;
+			this.start();
 		},
 		start: function() {
 			that = this;
-			this.fetch({remove: false});
+			this.fetch();			
 			this.reset = false;
 			this.interval = setInterval(function() {
 				that.timer += 6;
-				that.fetch();
+				that.fetch({remove: false});
 			}, 6000);
 		},
 		setEpisodeId: function(episodeId, time) {
@@ -59,6 +65,11 @@ var BeamlyClass = {
 		parse: function(response) {
 			return response.tweets;
 		}
+	}),
+
+	ScrubberView: Backbone.View.extend({
+		className: "beamly-scrubber",
+		template: _.template("<div class='beamly-scrubber-position'></div>")
 	}),
 
 	TweetView: Backbone.View.extend({
@@ -73,7 +84,7 @@ var BeamlyClass = {
 		},
 		removeInvalidChars: function(text) {
 		    return text.replace(/[^\x00-\x7F]/g, "");
-		},		
+		},	
 		render: function() {
 			time = this.model.get('smesh').reveal_time;
 			if (time < 0) {
@@ -124,11 +135,34 @@ var BeamlyClass = {
 			this.listenTo(this.tweetCollection, "add", this.updateTweets, this);
 			this.listenTo(this.model, "change:beamly_eid", this.setEpisodeId, this);
 			this.listenTo(this.tweetCollection, "error", this.destroy, this);
+			this.listenTo(this.model, "change:currentTime", this.updatePosition, this);
+			this.model.set("episodeLength", 3600);
+			this.model.set("currentTime", 0);
+		},
+		startScrubber: function() {
+			var that = this;			
+			this.interval = setInterval(function() {
+				that.model.set("currentTime", that.model.get("currentTime")+1);
+			}, 1000);
+		},
+		updatePosition: function() {
+			this.$(".beamly-scrubber-pos").css("width", this.model.get("currentTime")/this.model.get("episodeLength")*100 + "%");
 		},
 		events: {
 			"click .beamly-play": "startFetch",
 			"click .beamly-pause": "pauseFetch",
-			"click #beamly-logo" : "openBeamly"
+			"click #beamly-logo" : "openBeamly",
+			"click .beamly-scrubber": "scrub"
+		},
+		scrub: function(el) {
+			clearInterval(this.interval);
+			var newTime = Math.floor(this.model.get('episodeLength') * el.offsetX/250 / 6) * 6;
+			this.model.set('currentTime', newTime);
+			_.each(this.tweets, function(tweet) {
+				tweet.remove();
+			});
+			this.tweetCollection.scrubTo(newTime);
+			this.startScrubber();
 		},
 		openBeamly: function() {
 			window.open("http://uk.beamly.com/tv/episode/" + this.model.get("beamly_eid") + "/");
@@ -159,6 +193,7 @@ var BeamlyClass = {
 			this.remove();
 		},
 		pauseFetch: function() {
+			clearInterval(this.interval);
 			this.tweetCollection.pause();
 			this.$('#beamly-loading').animate({opacity: "0"}, 200);
 			this.$('.beamly-pause').removeClass('beamly-pause').addClass('beamly-play');
@@ -167,6 +202,7 @@ var BeamlyClass = {
 			this.$('#beamly-loading').animate({opacity: "1"}, 200);
 			this.$('.beamly-play').removeClass('beamly-play').addClass('beamly-pause');
 			this.tweetCollection.start();
+			this.startScrubber();
 		},
 		render: function() {
 			this.$el.html(this.template);
