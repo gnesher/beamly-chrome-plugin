@@ -26,7 +26,6 @@ chrome.extension.sendMessage({}, function(response) {
 		};
 
 		loadPlugin();
-
 	}
 	}, 10);
 });

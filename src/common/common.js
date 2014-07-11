@@ -1,4 +1,4 @@
-var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="beamly-guide">FOLLOW</li><li id="beamly-rooms">CHAT</li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div><div class="beamly-scrubber"><div class="beamly-scrubber-pos"</div></div></div></div>'
+var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="tweetabout"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://chrome.google.com/webstore/detail/beamly-ondemand/jddmmgjjfmfnjjbpiepnjbjhicimkdbe" data-text="I\'m watching Eastenders in iPlayer with @Beamly OnDemand replay tweets - get the plugin at" data-via="Beamly" data-count="none" data-dnt="true">Tweet</a></li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div><div class="beamly-scrubber"><div class="beamly-scrubber-pos"</div></div></div></div>'
 
 var BeamlyClass = {
 	placeHolder: chrome.extension.getURL("images/placeholder.png"),
@@ -75,12 +75,24 @@ var BeamlyClass = {
 	TweetView: Backbone.View.extend({
 		tagName: "li",
 		className: "clearfix",
-		template: _.template("<img src='<%- imgurl %>'><div class='content'><div><strong><%= username %></strong> <span class='beamly-time'><%= revealtime %></span><div><%= tweet %></div></div>"),
+		template: _.template("<img class='userlink' src='<%- imgurl %>'><div class='content'><div><strong class='userlink'><%= name %></strong> <span class='userlink'><%= username %></span> <span class='beamly-time'><%= revealtime %></span><div><%= tweet %></div></div>"),
 		initialize: function() {
 			this.render();
 			this.$('img').error(function() {
 				$(this).attr("src", BeamlyClass.placeHolder);
 			});
+		},
+		events: {
+			"click .userlink": 'gotoProfile',
+			"click .beamly-time": 'gotoTweet'
+		},
+		gotoTweet: function() {
+			var win = window.open('https://twitter.com/' + this.model.get('tweet').user.screen_name + '/status/' + this.model.get('tweet').id_str, '_blank');
+			win.focus();
+		},
+		gotoProfile: function() {
+			var win = window.open('https://twitter.com/' + this.model.get('tweet').user.screen_name, '_blank');
+			win.focus();
 		},
 		removeInvalidChars: function(text) {
 		    return text.replace(/[^\x00-\x7F]/g, "");
@@ -101,7 +113,8 @@ var BeamlyClass = {
 			data = {
 				'imgurl': this.model.get('tweet').user.profile_image_url_https,
 				'tweet': this.removeInvalidChars(linkify_entities(this.model.get('tweet'))),
-				'username': this.model.get('tweet').user.screen_name,
+				'name': this.model.get('tweet').user.name,
+				'username': '@' + this.model.get('tweet').user.screen_name,
 				'revealtime': revealTime
 			}
 			this.$el.html(this.template(data));
@@ -156,7 +169,7 @@ var BeamlyClass = {
 		},
 		scrub: function(el) {
 			clearInterval(this.interval);
-			var newTime = Math.floor(this.model.get('episodeLength') * el.offsetX/250 / 6) * 6;
+			var newTime = Math.floor(this.model.get('episodeLength') * el.offsetX/240 / 6) * 6;
 			this.model.set('currentTime', newTime);
 			this.cleanTweets();
 			this.tweetCollection.scrubTo(newTime);
@@ -210,6 +223,9 @@ var BeamlyClass = {
 		render: function() {
 			this.$el.html(this.template);
 			jQuery(this.element).append(this.$el);
+
+			// Can't load twitter widget through manifest, need to investigate other solutions - http://www.appuntivari.net/informatica/programmazione/chrome-extension/how-to-integrate-twitter-and-google-apis-in-chrome-extension
+			!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
 			return this
 		}
 	})

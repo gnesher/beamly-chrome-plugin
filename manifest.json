@@ -1,6 +1,6 @@
 {
   "name": "Beamly OnDemand",
-  "version": "1.6.1",
+  "version": "1.7",
   "manifest_version": 2,
   "description": "Beamly OnDemand",
   "homepage_url": "http://beamly.com",
@@ -81,7 +81,6 @@
     "js/twitter-entities.js",
     "src/common/common.js",
     "src/common/common.css",
-    "//static.zeebox.com/embed/1/zeebox.js",
     "src/browser_action/popup.js",
     "images/placeholder.png"
   ]

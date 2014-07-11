@@ -9,8 +9,11 @@
 
 #beamly-header li {
 	display: inline-block;
-	margin-right: 12px;
 	vertical-align: middle;
+}
+
+#beamly-guide {
+	font-size: 12px;
 }
 
 #beamly-header li:last-child {
@@ -20,8 +23,8 @@
 #beamly-logo {
 	background-image:url('chrome-extension://__MSG_@@extension_id__/images/logo.png');	
 	height: 48px;
-	width: 125px;
-	margin-left: 10px;
+	width: 210px;
+	margin-right: 15px;
 	cursor: pointer;
 }
 
@@ -138,4 +141,18 @@
 	display: inline-block;
 	float: right;
 	margin-top: -4px;
+}
+
+.userlink {
+	color: #e90649;
+	cursor: pointer;
+	font-size: 11px;
+}
+
+#tweetabout {
+	margin-top: 13px;
+}
+
+#tweetabout a {
+	color: #e90649;
 }
