@@ -1,4 +1,4 @@
-var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="tweetabout"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://chrome.google.com/webstore/detail/beamly-ondemand/jddmmgjjfmfnjjbpiepnjbjhicimkdbe" data-text="I\'m watching Eastenders in iPlayer with @Beamly OnDemand replay tweets - get the plugin at" data-via="Beamly" data-count="none" data-dnt="true">Tweet</a></li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div><div class="beamly-scrubber"><div class="beamly-scrubber-pos"</div></div></div></div>'
+var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="tweetabout"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://chrome.google.com/webstore/detail/beamly-ondemand/jddmmgjjfmfnjjbpiepnjbjhicimkdbe" data-text="I\'m watching <%= seriesName %> in iPlayer with @Beamly OnDemand replay tweets - get the plugin at" data-via="Beamly" data-count="none" data-dnt="true">Tweet</a></li></ul><div id="beamly-body"><ul id="beamly-loading"><li>Fetching Tweets...</li></ul><ul id="beamly-tweets"></ul><div class="beamly-footer"><div class="beamly-play"></div><div class="beamly-scrubber"><div class="beamly-scrubber-pos"</div></div></div></div>'
 
 var BeamlyClass = {
 	placeHolder: chrome.extension.getURL("images/placeholder.png"),
@@ -67,11 +67,6 @@ var BeamlyClass = {
 		}
 	}),
 
-	ScrubberView: Backbone.View.extend({
-		className: "beamly-scrubber",
-		template: _.template("<div class='beamly-scrubber-position'></div>")
-	}),
-
 	TweetView: Backbone.View.extend({
 		tagName: "li",
 		className: "clearfix",
@@ -127,13 +122,7 @@ var BeamlyClass = {
 			this.canonicalurl = encodeURIComponent(canonicalurl);
 		},
 		url: function() {
-			return 'http://api.tanktop.tv/api/1/eyJzZXJ2aWNlX2lkIjoxMn0:1X3Kaw:rV-8rGpCMkY4-WMKpGEdKtpEf0k/lookup/byurl/?url=' + this.canonicalurl
-		},
-		parse: function(response) {
-			if (response.episode_instances.length == 1 && response.episode_instances[0].beamly_eid !== null) {
-				return response.episode_instances[0]
-			}
-			
+			return 'http://bubbl-i.zeebox.com/bubbl/uk/ondemand?url=' + this.canonicalurl
 		}
 	}),
 
@@ -141,15 +130,14 @@ var BeamlyClass = {
 		tweets: [],
 		count: 0,
 		id: "beamlyView",
-		template: beamlyTemplate,
+		template: _.template(beamlyTemplate),
 		initialize: function(options) {
 			this.element = options.element;
 			this.tweetCollection = new BeamlyClass.TweetCollection();
 			this.listenTo(this.tweetCollection, "add", this.updateTweets, this);
-			this.listenTo(this.model, "change:beamly_eid", this.setEpisodeId, this);
+			this.listenTo(this.model, "change:episode_id", this.setEpisodeId, this);
 			this.listenTo(this.tweetCollection, "error", this.destroy, this);
 			this.listenTo(this.model, "change:currentTime", this.updatePosition, this);
-			this.model.set("episodeLength", 3600);
 			this.model.set("currentTime", 0);
 		},
 		startScrubber: function() {
@@ -159,7 +147,7 @@ var BeamlyClass = {
 			}, 1000);
 		},
 		updatePosition: function() {
-			this.$(".beamly-scrubber-pos").css("width", this.model.get("currentTime")/this.model.get("episodeLength")*100 + "%");
+			this.$(".beamly-scrubber-pos").css("width", this.model.get("currentTime")/this.model.get("duration")*100 + "%");
 		},
 		events: {
 			"click .beamly-play": "startFetch",
@@ -169,7 +157,7 @@ var BeamlyClass = {
 		},
 		scrub: function(el) {
 			clearInterval(this.interval);
-			var newTime = Math.floor(this.model.get('episodeLength') * el.offsetX/240 / 6) * 6;
+			var newTime = Math.floor(this.model.get('duration') * el.offsetX/240 / 6) * 6;
 			this.model.set('currentTime', newTime);
 			this.cleanTweets();
 			this.tweetCollection.scrubTo(newTime);
@@ -183,10 +171,10 @@ var BeamlyClass = {
 			this.tweets = [];
 		},
 		openBeamly: function() {
-			window.open("http://uk.beamly.com/tv/episode/" + this.model.get("beamly_eid") + "/");
+			window.open("http://uk.beamly.com/tv/episode/" + this.model.get("episode_id") + "/");
 		},
 		setEpisodeId: function() {
-			this.tweetCollection.setEpisodeId(this.model.get('beamly_eid'), 120);
+			this.tweetCollection.setEpisodeId(this.model.get('episode_id'), 120);
 			this.render().startFetch();
 		},
 		updateTweets: function(model) {
@@ -221,7 +209,7 @@ var BeamlyClass = {
 			this.startScrubber();
 		},
 		render: function() {
-			this.$el.html(this.template);
+			this.$el.html(this.template({"seriesName": this.model.get('title')}));
 			jQuery(this.element).append(this.$el);
 
 			// Can't load twitter widget through manifest, need to investigate other solutions - http://www.appuntivari.net/informatica/programmazione/chrome-extension/how-to-integrate-twitter-and-google-apis-in-chrome-extension
