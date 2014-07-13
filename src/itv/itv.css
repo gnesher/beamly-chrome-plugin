@@ -9,17 +9,17 @@
 	text-align: left;
 }
 
-.player-wrapper__inner {
+.beamly .player-wrapper__inner {
 	display: inline-block;
 	margin: 0;
 	clear: none;
 }
 
-.region-content {
+.beamly .region-content {
 	width: 1053px !important;
 }
 
-.player-wrapper:before {
+.beamly .player-wrapper:before {
 	width: 0% !important;
 	height: 0% !important;
 }

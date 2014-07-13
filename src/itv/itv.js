@@ -25,7 +25,18 @@ chrome.extension.sendMessage({}, function(response) {
 			episodeModel.fetch();
 		};
 
-		loadPlugin();
+		chrome.storage.onChanged.addListener(function(changes, namespace) {
+			if (changes.beamlyActive !== "undefined")
+				if (changes.beamlyActive.newValue)
+					loadPlugin();
+				else 
+					beamlyView.destroy();
+		});
+
+		chrome.storage.sync.get('beamlyActive', function(items) {
+			if (items.beamlyActive)
+				loadPlugin();		
+		});
 
 	}
 	}, 10);

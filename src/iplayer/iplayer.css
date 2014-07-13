@@ -9,12 +9,12 @@
 	height: 466px;
 }
 
-#player-outer-outer {
+.beamly #player-outer-outer {
 	width: 1152px !important;
 	max-width: 1152px !important;
 
 }
-#player-container {
+.beamly #player-container {
 	width: 832px !important;
 	height: 468px !important;
 	display: inline-block;

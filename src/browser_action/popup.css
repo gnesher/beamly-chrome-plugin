@@ -26,7 +26,7 @@ body {
 #beamly-logo {
 	background-image:url('chrome-extension://__MSG_@@extension_id__/images/logo.png');	
 	height: 48px;
-	width: 125px;
+	width: 138px;
 	display: inline-block;
 
 }

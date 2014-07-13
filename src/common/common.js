@@ -132,6 +132,7 @@ var BeamlyClass = {
 		id: "beamlyView",
 		template: _.template(beamlyTemplate),
 		initialize: function(options) {
+			document.getElementsByTagName('body')[0].className+=' beamly';
 			this.element = options.element;
 			this.tweetCollection = new BeamlyClass.TweetCollection();
 			this.listenTo(this.tweetCollection, "add", this.updateTweets, this);
@@ -192,6 +193,7 @@ var BeamlyClass = {
 			}				
 		},
 		destroy: function () {
+			document.body.className = document.body.className.replace("beamly","");
 			this.pauseFetch();
 			this.cleanTweets();
 			this.remove();

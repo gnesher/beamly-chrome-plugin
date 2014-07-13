@@ -8,10 +8,10 @@
 	height: 400px;
 }
 
-#catchUpPlayer {
+.beamly #catchUpPlayer {
 	float: left;
 }
 
-#beamly-tweets {
+.beamly #beamly-tweets {
 	height: 300px !important;
 }
