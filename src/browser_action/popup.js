@@ -1,6 +1,10 @@
 function restore_options() {
   chrome.storage.sync.get('beamlyActive', function(items) {
-    $('#myonoffswitch').attr('checked', items.beamlyActive);
+    state = items.beamlyActive
+    if(chrome.runtime.lastError) {
+        state = true
+    }
+    $('#myonoffswitch').attr('checked', state);
   });
 };
 

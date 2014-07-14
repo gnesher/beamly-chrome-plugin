@@ -34,8 +34,9 @@ chrome.extension.sendMessage({}, function(response) {
 		});
 
 		chrome.storage.sync.get('beamlyActive', function(items) {
-			if (items.beamlyActive)
-				loadPlugin();		
+            state = items.beamlyActive
+            if ((typeof state == 'undefined') || (state === true))
+                loadPlugin();		
 		});
 
 	}
