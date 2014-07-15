@@ -1,9 +1,14 @@
-#Beamly Chrome Plugin
+#Beamly OnDemand (ver 2)
 
-The plugin offers 2 sets of functionality:
-1. The Beamly tv box will be added to the video players in the BBC, ITV and 4OD sites
-2. The plugin will try to match titles in Youtube videos (on the Youtube site) with the Beamly EPG. if a match is found, it will show information on the series + time/date of upcoming shows
+We all love watching our favourite shows as catch-up on iPlayer, ITV Player and 4OD. But when you watch catch-up you miss out on all the social goodness. Where are the tweets? Why can't you see people's reactions?
 
-### This plugin is a work in process, and was developed during a 24 hour hackathon - use at your own risk
-### Plugin strcture was created using http://extensionizr.com
+Beamly OnDemand changes that. With Beamly OnDemand, when you go to iPlayer, ITV Player and 4OD you'll get a tweet panel added next to the video player.
 
+The tweets shown are the ones made when the show was first broadcast on TV. Beamly OnDemand finally makes catch-up social - you get to watch whenever you want, and you still get to see the tweets made at that moment in the original airing of the show.
+
+Beamly OnDemand works for shows broadcast in the past 7 days on BBC iPlayer, ITV Player and 4OD
+
+
+### Dev info
+
+The initial extension was developed during the DevLabLive hackathon.
