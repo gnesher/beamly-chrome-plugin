@@ -172,7 +172,7 @@ var BeamlyClass = {
 			this.tweets = [];
 		},
 		openBeamly: function() {
-			window.open("http://uk.beamly.com/tv/episode/" + this.model.get("episode_id") + "/");
+			window.open("http://uk.beamly.com/tv/episode/" + this.model.get("episode_id") + "/?utm_source=beamly_ondemand&utm_medium=chrome&utm_campaign=launch");
 		},
 		setEpisodeId: function() {
 			this.tweetCollection.setEpisodeId(this.model.get('episode_id'), 120);
