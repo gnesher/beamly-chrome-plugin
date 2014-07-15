@@ -3,34 +3,6 @@ var beamlyTemplate = '<ul id="beamly-header"><li id="beamly-logo"></li><li id="t
 var BeamlyClass = {
 	placeHolder: chrome.extension.getURL("images/placeholder.png"),
 	originalSync: Backbone.sync,
-	fetchBrand: function(seriesName) {
-		var deferred = new $.Deferred();
-		$.ajax({
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader('zeebox-app-id', "0f434d35");
-				xhr.setRequestHeader('zeebox-app-key', "0ef2d755c449584e232479a6be882c0f");
-			},
-			data: {"q": seriesName, "tvc": "uk"},
-			url: "https://api-uk.zeebox.com/search/2/blended-search"
-		}).done(function(response){
-			var series = null;
-			_.each(response.sections, function(section){
-				if (section.display_type == 'Top Results') {
-					_.each(section.docs, function(doc) {
-						if (doc.name.toLowerCase() == seriesName.toLowerCase()) {
-							series = doc;
-						}	
-					});
-				}
-			});
-			if (series !== null) {
-				deferred.resolve(series);
-			} else {
-				deferred.reject({'error': 'unable to match brand ID', 'success': false});
-			}
-		});
-		return deferred.promise();
-	},
 	TweetCollection: Backbone.Collection.extend({
 		previousLength: 0,
 		reset: true,

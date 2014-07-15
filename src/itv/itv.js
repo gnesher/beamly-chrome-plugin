@@ -18,7 +18,8 @@ chrome.extension.sendMessage({}, function(response) {
 			beamlyView;
 
 		var loadPlugin = function() {
-			var canonicalurl = document.URL;
+                        var episode = document.getElementsByClassName("node-episode episode-highlight")[0];
+                        var canonicalurl = document.location.protocol + '//' + document.location.host + episode.getAttribute('about');
 			episodeModel = new BeamlyClass.EpisodeModel(canonicalurl);
 			tweetCollection = new BeamlyClass.TweetCollection();
 			beamlyView = new BeamlyClass.BeamlyView({'model': episodeModel, 'element': ".player-wrapper"});
@@ -34,9 +35,9 @@ chrome.extension.sendMessage({}, function(response) {
 		});
 
 		chrome.storage.sync.get('beamlyActive', function(items) {
-            state = items.beamlyActive
-            if ((typeof state == 'undefined') || (state === true))
-                loadPlugin();		
+                state = items.beamlyActive
+                if ((typeof state == 'undefined') || (state === true))
+                    loadPlugin();		
 		});
 
 	}
