@@ -1,9 +1,10 @@
 body {
-	width: 500px;
-	height: 400px;
-	margin: 0;
-	padding: 0;
-	font-size: 14px;
+    width: 500px;
+    height: 400px;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-family: Arial;
 }
 
 #footer {
@@ -87,4 +88,8 @@ a, a:visited, a:hover, a:active {
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0px; 
+}
+.container {
+    line-height: 40px;
+    font-weight: bold;
 }
